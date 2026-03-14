@@ -25,8 +25,12 @@ model = genai.GenerativeModel(
 )
 
 chat = model.start_chat()
-# this is the hardcoded request
-response = chat.send_message("What are the latest trends in edge AI?")
+# this is the hardcoded question
+#response = chat.send_message("What are the latest trends in edge AI?")
+# user input question
+user_question = input("What do you want to research? ")
+response = chat.send_message(user_question)
+
 
 part = response.candidates[0].content.parts[0]
 
