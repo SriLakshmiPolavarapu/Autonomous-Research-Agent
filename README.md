@@ -81,3 +81,17 @@ Autonomous_Agent/
 ├── .env                # API key (not committed)
 └── README.md
 ```
+
+## Google AI Studio Link
+https://aistudio.google.com/api-keys?project=gen-lang-client-0002446988
+
+
+## What imports are used:
+
+1. import os: it gives access to the operating system's env, things like env variables, API keys, file paths
+2. dotenv: to load variables from .env file
+3. CORSMiddleware: it allows out frontend to talk to out backend
+4. StreamingResponse: it makes sure our FastAPI send data chunk by chunk
+5. BaseModel from pydantic: making sure of the incoming data request are in the correct shape and size
+6. genai: to use Gemini models
+7. DDGS: for real-time search
