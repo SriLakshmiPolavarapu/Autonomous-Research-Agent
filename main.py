@@ -12,13 +12,13 @@ import json
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# creating out FastAPI service
+# creating our FastAPI service
 app = FastAPI()
 
-# allowing frontend to talk to out backend
+# allowing frontend to talk to our backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],  # changed from localhost for Vercel deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,10 +38,10 @@ def search_web(query: str) -> str:
 # model setup
 def make_model():
     return genai.GenerativeModel(
-    model_name="gemini-2.5-flash",
-    tools=[search_web],
-    system_instruction="You are a research agent. When asked about current events or recent information, ALWAYS use the search_web tool. Never answer from memory."
-)
+        model_name="gemini-2.5-flash",
+        tools=[search_web],
+        system_instruction="You are a research agent. When asked about current events or recent information, ALWAYS use the search_web tool. Never answer from memory."
+    )
 
 class QueryRequest(BaseModel):
     question: str
@@ -49,9 +49,14 @@ class QueryRequest(BaseModel):
 #chat = model.start_chat()
 # this is the hardcoded question
 #response = chat.send_message("What are the latest trends in edge AI?")
+
 # user input question
 #user_question = input("What do you want to research? ")
 #response = chat.send_message(user_question)
+
+@app.get("/")
+def root():
+    return {"status": "research agent is running"}
 
 @app.post("/research")
 async def research(req: QueryRequest):
@@ -60,10 +65,11 @@ async def research(req: QueryRequest):
             model = make_model()
             chat = model.start_chat()
             response = chat.send_message(req.question)
-# adding the loop so that model searches for multiple times
+
+            # adding the loop so that model searches for multiple times
             while True:
                 part = response.candidates[0].content.parts[0]
-                
+
                 if hasattr(part, "function_call") and part.function_call.name:
                     query = part.function_call.args["query"]
                     yield f"data: {json.dumps({'type': 'search', 'query': query})}\n\n"

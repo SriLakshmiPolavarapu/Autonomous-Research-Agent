@@ -1,14 +1,4 @@
 {
-    "builds": [
-      {
-        "src": "research_agent.py",
-        "use": "@vercel/python"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "research_agent.py"
-      }
-    ]
+    "builds": [{ "src": "main.py", "use": "@vercel/python" }],
+    "routes": [{ "src": "/(.*)", "dest": "main.py" }]
   }
