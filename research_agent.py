@@ -3,9 +3,26 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from ddgs import DDGS
 from google.protobuf.struct_pb2 import Struct
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.response import StreamingResponse
+from pydantic import BaseModel
+import json
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# creating out FastAPI service
+app = FastAPI()
+
+# allowing frontend to talk to out backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # tool function
 def search_web(query: str) -> str:
